@@ -8,12 +8,12 @@
 	let rafID;
 	let rafState;
 
-	const sceneInfo = [
+	const filmInfo = [
 		{
 			// 0
 			type: 'sticky',
-			playLengthParam: 10, // 재생시간이 길면 많이 스크롤해야 한다.
-			playLength: 0, // 브라우저의 사이즈에 비례하여 계산됨
+			playLengthParam: 10, 
+			playLength: 0, 
 			objs: {
 				container: document.querySelector('#scroll-section-0'),
 				messageA: document.querySelector('#scroll-section-0 .main-message.a'),
@@ -22,7 +22,7 @@
 				context: document.querySelector('#video-canvas-0').getContext('2d'),
 				videoImages: []
 			},
-			values: {
+			cssMeta: {
 				videoImageCount: 300,
 				imageSequencesStartEnd: [0, 299],
 				canvas_opacity: [1, 0, { start: 0.9, end: 1 }], // 처음 값 , 마지막 값, 시작 시간, 종료 시간
@@ -37,7 +37,6 @@
 			}
 		},
 		{
-			// 1
 			type: 'normal',
 			playLength: 0,
 			objs: {
@@ -45,7 +44,6 @@
 			}
 		},
 		{
-			// 2
 			type: 'sticky',
 			playLengthParam: 10,
 			playLength: 0,
@@ -60,7 +58,7 @@
 				context: document.querySelector('#video-canvas-1').getContext('2d'),
 				videoImages: []
 			},
-			values: {
+			cssMeta: {
 				videoImageCount: 600,
 				imageSequencesStartEnd: [0, 599],
 				canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
@@ -82,7 +80,6 @@
 			}
 		},
 		{
-			// 3
 			type: 'wide',
 			playLengthParam: 10,
 			playLength: 0,
@@ -97,8 +94,7 @@
 				],
 				images: []
 			},
-			values: {
-				// 브라우저 사이즈에 따라 계산되어야 함
+			cssMeta: {
 				rectangleLeft: [ 0, 0, { start: 0, end: 0 } ], 
 				rectangleRight: [ 0, 0, { start: 0, end: 0 } ], 
 				blendHeight: [ 0.0, 0, { start: 0, end: 0 } ],
@@ -112,40 +108,34 @@
 
 	function setCanvasImages() {
 		let imgElem;
-		for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
+		for (let i = 0; i < filmInfo[0].cssMeta.videoImageCount; i++) {
 			imgElem = new Image();
 			imgElem.src = `./video/videoplayback_${1000 + i}.jpg`;
-			sceneInfo[0].objs.videoImages.push(imgElem);
+			filmInfo[0].objs.videoImages.push(imgElem);
 		}
 
 		let imgElem2;
-		for (let i = 0; i < sceneInfo[2].values.videoImageCount; i++) {
+		for (let i = 0; i < filmInfo[2].cssMeta.videoImageCount; i++) {
 			imgElem2 = new Image();
 			imgElem2.src = `./video/videoplayback_${1300 + i}.jpg`;
-			sceneInfo[2].objs.videoImages.push(imgElem2);
+			filmInfo[2].objs.videoImages.push(imgElem2);
 		}
 
 		let imgElem3;
-		for (let i = 0; i < sceneInfo[3].objs.imagesPath.length; i++) {
+		for (let i = 0; i < filmInfo[3].objs.imagesPath.length; i++) {
 			imgElem3 = new Image();
-			imgElem3.src = sceneInfo[3].objs.imagesPath[i];
-			sceneInfo[3].objs.images.push(imgElem3);
+			imgElem3.src = filmInfo[3].objs.imagesPath[i];
+			filmInfo[3].objs.images.push(imgElem3);
 		}
 	}
 
 	function setLayout() {
-		for (let i = 0; i < sceneInfo.length; i++) {
-			if (sceneInfo[i].type === 'sticky' || sceneInfo[i].type === 'wide') {
-				sceneInfo[i].playLength = sceneInfo[i].playLengthParam * window.innerHeight;
-			} else if (sceneInfo[i].type === 'normal')  {
-                sceneInfo[i].playLength = sceneInfo[i].objs.container.offsetHeight;
-			}
-            sceneInfo[i].objs.container.style.height = `${sceneInfo[i].playLength}px`;
-		}
+		setContainerHeight();
 
+		// set CurrentSceneID
 		let totalScrollHeight = 0;
-		for (let i = 0; i < sceneInfo.length; i++) {
-			totalScrollHeight += sceneInfo[i].playLength;
+		for (let i = 0; i < filmInfo.length; i++) {
+			totalScrollHeight += filmInfo[i].playLength;
 			if (totalScrollHeight >= window.pageYOffset) {
 				currentSceneID = i;
 				break;
@@ -153,114 +143,126 @@
 		}
 		document.body.setAttribute('id', `show-scene-${currentSceneID}`);
 
-		const widthRatio = window.innerWidth / 1920;
-		const heightRatio = window.innerHeight / 1080;
-		let canvasScaleRatio;
 
-		if (widthRatio <= heightRatio) {
-			// 캔버스보다 브라우저 창이 홀쭉한 경우
-			canvasScaleRatio = heightRatio;
-		} else {
-			// 캔버스보다 브라우저 창이 납작한 경우
-			canvasScaleRatio = widthRatio;
+		setCanvasLayout();
+
+		function setCanvasLayout() {
+			const widthRatio = window.innerWidth / 1920;
+			const heightRatio = window.innerHeight / 1080;
+			let canvasScaleRatio;
+			if (widthRatio <= heightRatio) {
+				canvasScaleRatio = heightRatio;
+			}
+			else {
+				canvasScaleRatio = widthRatio;
+			}
+			filmInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
+			filmInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
 		}
-		
-		sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
-		sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
+
+		function setContainerHeight() {
+			for (let i = 0; i < filmInfo.length; i++) {
+				if (filmInfo[i].type === 'sticky' || filmInfo[i].type === 'wide') {
+					filmInfo[i].playLength = filmInfo[i].playLengthParam * window.innerHeight;
+				}
+				else if (filmInfo[i].type === 'normal') {
+					filmInfo[i].playLength = filmInfo[i].objs.container.offsetHeight;
+				}
+				filmInfo[i].objs.container.style.height = `${filmInfo[i].playLength}px`;
+			}
+		}
 	}
 
-	function calcValues(values, currentYOffsetAtCurrentScene) {
+	function calculateCssValueFromCurrentScene(cssMeta, currentYOffsetAtCurrentScene) {
 		let cssValue;
-		// 현재 씬(스크롤섹션)에서 스크롤된 범위를 비율로 구하기
-		const currentSceneScrollHeight = sceneInfo[currentSceneID].playLength;
+		const currentSceneScrollHeight = filmInfo[currentSceneID].playLength;
 		const currentScrollRatio = currentYOffsetAtCurrentScene / currentSceneScrollHeight; 
 
-		if (values.length === 3) {
-			const startTimingHeight = values[2].start * currentSceneScrollHeight;
-			const endTimingHeight = values[2].end * currentSceneScrollHeight;
+		if (cssMeta.length === 3) {
+			const startTimingHeight = cssMeta[2].start * currentSceneScrollHeight;
+			const endTimingHeight = cssMeta[2].end * currentSceneScrollHeight;
 			const animationDurationHeight = endTimingHeight - startTimingHeight;
 			if (currentYOffsetAtCurrentScene >= startTimingHeight && currentYOffsetAtCurrentScene <= endTimingHeight) {
 				const currentPlayingHeight  = currentYOffsetAtCurrentScene - startTimingHeight
-				cssValue = currentPlayingHeight / animationDurationHeight * (values[1] - values[0]) + values[0];
+				cssValue = currentPlayingHeight / animationDurationHeight * (cssMeta[1] - cssMeta[0]) + cssMeta[0];
 			} else if (currentYOffsetAtCurrentScene < startTimingHeight) {
-				cssValue = values[0];
+				cssValue = cssMeta[0];
 			} else if (currentYOffsetAtCurrentScene > endTimingHeight) {
-				cssValue = values[1];
+				cssValue = cssMeta[1];
 			}
 		} else {
-			cssValue = currentScrollRatio * (values[1] - values[0]) + values[0];
+			cssValue = currentScrollRatio * (cssMeta[1] - cssMeta[0]) + cssMeta[0];
 		}
 
 		return cssValue;
 	}
 
 	function playAnimation() {
-		const objs = sceneInfo[currentSceneID].objs;
-		const values = sceneInfo[currentSceneID].values;
+		const objs = filmInfo[currentSceneID].objs;
+		const cssMeta = filmInfo[currentSceneID].cssMeta;
 		const currentYOffsetAtCurrentScene = window.pageYOffset - prevAllSceneHeight;
-		const CurrentScenescrollHeight = sceneInfo[currentSceneID].playLength;
+		const CurrentScenescrollHeight = filmInfo[currentSceneID].playLength;
 		const scrollRatioAtCurrentScene = currentYOffsetAtCurrentScene / CurrentScenescrollHeight;
 
 		switch (currentSceneID) {
 			case 0:
-				objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffsetAtCurrentScene);
-				// 보통 in의 end와 맞춰주도록 한다. 그렇게 하면 씬의 위치에 따라서 in이 적용되다 조건에 벗어나면 아웃이 발생한다.
+				objs.canvas.style.opacity = calculateCssValueFromCurrentScene(cssMeta.canvas_opacity, currentYOffsetAtCurrentScene);
 				if (scrollRatioAtCurrentScene <= 0.41) { 
-					objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffsetAtCurrentScene);
-					objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_in, currentYOffsetAtCurrentScene);
+					objs.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
 				} else {
-					objs.messageA.style.opacity = calcValues(values.messageA_opacity_out, currentYOffsetAtCurrentScene);
-					objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_out, currentYOffsetAtCurrentScene);
+					objs.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
 				}
 
 				if (scrollRatioAtCurrentScene <= 0.88) {
-					objs.messageB.style.opacity = calcValues(values.messageB_opacity_in, currentYOffsetAtCurrentScene);
-					objs.messageB.style.transform = `translate3d(0, ${calcValues(values.messageB_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageB.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageB_opacity_in, currentYOffsetAtCurrentScene);
+					objs.messageB.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageB_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
 				} else {
-					objs.messageB.style.opacity = calcValues(values.messageB_opacity_out, currentYOffsetAtCurrentScene);
-					objs.messageB.style.transform = `translate3d(0, ${calcValues(values.messageB_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageB.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageB_opacity_out, currentYOffsetAtCurrentScene);
+					objs.messageB.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageB_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
 				}
 
 				break;
 
 			case 2:
 				if (scrollRatioAtCurrentScene <= 0.5) {
-					objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYOffsetAtCurrentScene);
+					objs.canvas.style.opacity = calculateCssValueFromCurrentScene(cssMeta.canvas_opacity_in, currentYOffsetAtCurrentScene);
 				} else {
-					objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffsetAtCurrentScene);
+					objs.canvas.style.opacity = calculateCssValueFromCurrentScene(cssMeta.canvas_opacity_out, currentYOffsetAtCurrentScene);
 				}
 
 				if (scrollRatioAtCurrentScene <= 0.32) {
-					objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffsetAtCurrentScene);
-					objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_in, currentYOffsetAtCurrentScene);
+					objs.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
 				} else {
-					objs.messageA.style.opacity = calcValues(values.messageA_opacity_out, currentYOffsetAtCurrentScene);
-					objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_out, currentYOffsetAtCurrentScene);
+					objs.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
 				}
 
 				if (scrollRatioAtCurrentScene <= 0.67) {
-					objs.messageB.style.transform = `translate3d(0, ${calcValues(values.messageB_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
-					objs.messageB.style.opacity = calcValues(values.messageB_opacity_in, currentYOffsetAtCurrentScene);
-					objs.pinB.style.transform = `scaleY(${calcValues(values.pinB_scaleY, currentYOffsetAtCurrentScene)})`;
+					objs.messageB.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageB_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageB.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageB_opacity_in, currentYOffsetAtCurrentScene);
+					objs.pinB.style.transform = `scaleY(${calculateCssValueFromCurrentScene(cssMeta.pinB_scaleY, currentYOffsetAtCurrentScene)})`;
 				} else {
-					objs.messageB.style.transform = `translate3d(0, ${calcValues(values.messageB_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
-					objs.messageB.style.opacity = calcValues(values.messageB_opacity_out, currentYOffsetAtCurrentScene);
-					objs.pinB.style.transform = `scaleY(${calcValues(values.pinB_scaleY, currentYOffsetAtCurrentScene)})`;
+					objs.messageB.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageB_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageB.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageB_opacity_out, currentYOffsetAtCurrentScene);
+					objs.pinB.style.transform = `scaleY(${calculateCssValueFromCurrentScene(cssMeta.pinB_scaleY, currentYOffsetAtCurrentScene)})`;
 				}
 
 				if (scrollRatioAtCurrentScene <= 0.83) {
-					objs.messageC.style.transform = `translate3d(0, ${calcValues(values.messageC_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
-					objs.messageC.style.opacity = calcValues(values.messageC_opacity_in, currentYOffsetAtCurrentScene);
-					objs.pinC.style.transform = `scaleY(${calcValues(values.pinC_scaleY, currentYOffsetAtCurrentScene)})`;
+					objs.messageC.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageC_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageC.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageC_opacity_in, currentYOffsetAtCurrentScene);
+					objs.pinC.style.transform = `scaleY(${calculateCssValueFromCurrentScene(cssMeta.pinC_scaleY, currentYOffsetAtCurrentScene)})`;
 				} else {
-					objs.messageC.style.transform = `translate3d(0, ${calcValues(values.messageC_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
-					objs.messageC.style.opacity = calcValues(values.messageC_opacity_out, currentYOffsetAtCurrentScene);
+					objs.messageC.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageC_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+					objs.messageC.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageC_opacity_out, currentYOffsetAtCurrentScene);
 				}
 
 				// currentScene 3에서 쓰는 캔버스를 미리 그려주기 시작
 				if (scrollRatioAtCurrentScene > 0.9) {
-					const objs = sceneInfo[3].objs;
-					const values = sceneInfo[3].values;
+					const objs = filmInfo[3].objs;
+					const cssMeta = filmInfo[3].cssMeta;
 					const widthRatio = window.innerWidth / objs.canvas.width;
 					const heightRatio = window.innerHeight / objs.canvas.height;
 					let canvasScaleRatio;
@@ -282,19 +284,19 @@
 					const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio;
 
 					const whiteRectWidth = recalculatedInnerWidth * 0.15;
-					values.rectangleLeft[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
-					values.rectangleLeft[1] = values.rectangleLeft[0] - whiteRectWidth;
-					values.rectangleRight[0] = values.rectangleLeft[0] + recalculatedInnerWidth - whiteRectWidth;
-					values.rectangleRight[1] = values.rectangleRight[0] + whiteRectWidth;
+					cssMeta.rectangleLeft[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
+					cssMeta.rectangleLeft[1] = cssMeta.rectangleLeft[0] - whiteRectWidth;
+					cssMeta.rectangleRight[0] = cssMeta.rectangleLeft[0] + recalculatedInnerWidth - whiteRectWidth;
+					cssMeta.rectangleRight[1] = cssMeta.rectangleRight[0] + whiteRectWidth;
 					// 좌우 흰색 박스 그리기
 					objs.context.fillRect(
-						parseInt(values.rectangleLeft[0]),
+						parseInt(cssMeta.rectangleLeft[0]),
 						0,
 						parseInt(whiteRectWidth),
 						objs.canvas.height
 					);
 					objs.context.fillRect(
-						parseInt(values.rectangleRight[0]),
+						parseInt(cssMeta.rectangleRight[0]),
 						0,
 						parseInt(whiteRectWidth),
 						objs.canvas.height
@@ -327,46 +329,46 @@
 				const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio;
 				const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio;
 
-				if (!values.rectangleY) {
-					// values.rectangleY = objs.canvas.getBoundingClientRect().top;
-					values.rectangleY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2;
-					values.rectangleLeft[2].start = (window.innerHeight / 2) / CurrentScenescrollHeight;
-					values.rectangleRight[2].start = (window.innerHeight / 2) / CurrentScenescrollHeight;
-					values.rectangleLeft[2].end = values.rectangleY / CurrentScenescrollHeight;
-					values.rectangleRight[2].end = values.rectangleY / CurrentScenescrollHeight;
+				if (!cssMeta.rectangleY) {
+					// cssMeta.rectangleY = objs.canvas.getBoundingClientRect().top;
+					cssMeta.rectangleY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2;
+					cssMeta.rectangleLeft[2].start = (window.innerHeight / 2) / CurrentScenescrollHeight;
+					cssMeta.rectangleRight[2].start = (window.innerHeight / 2) / CurrentScenescrollHeight;
+					cssMeta.rectangleLeft[2].end = cssMeta.rectangleY / CurrentScenescrollHeight;
+					cssMeta.rectangleRight[2].end = cssMeta.rectangleY / CurrentScenescrollHeight;
 				}
 
 				const whiteRectWidth = recalculatedInnerWidth * 0.15;
-				values.rectangleLeft[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
-				values.rectangleLeft[1] = values.rectangleLeft[0] - whiteRectWidth;
-				values.rectangleRight[0] = values.rectangleLeft[0] + recalculatedInnerWidth - whiteRectWidth;
-				values.rectangleRight[1] = values.rectangleRight[0] + whiteRectWidth;
+				cssMeta.rectangleLeft[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
+				cssMeta.rectangleLeft[1] = cssMeta.rectangleLeft[0] - whiteRectWidth;
+				cssMeta.rectangleRight[0] = cssMeta.rectangleLeft[0] + recalculatedInnerWidth - whiteRectWidth;
+				cssMeta.rectangleRight[1] = cssMeta.rectangleRight[0] + whiteRectWidth;
 
 				// 좌우 흰색 박스 그리기
 				objs.context.fillRect(
-					parseInt(calcValues(values.rectangleLeft, currentYOffsetAtCurrentScene)),
+					parseInt(calculateCssValueFromCurrentScene(cssMeta.rectangleLeft, currentYOffsetAtCurrentScene)),
 					0,
 					parseInt(whiteRectWidth),
 					objs.canvas.height
 				);
 				objs.context.fillRect(
-					parseInt(calcValues(values.rectangleRight, currentYOffsetAtCurrentScene)),
+					parseInt(calculateCssValueFromCurrentScene(cssMeta.rectangleRight, currentYOffsetAtCurrentScene)),
 					0,
 					parseInt(whiteRectWidth),
 					objs.canvas.height
 				);
 
-				if (scrollRatioAtCurrentScene < values.rectangleLeft[2].end) {
+				if (scrollRatioAtCurrentScene < cssMeta.rectangleLeft[2].end) {
 					step = 1;
 					objs.canvas.classList.remove('sticky');
 				} else {
 					step = 2;
-					// values.blendHeight: [ 0, 0, { start: 0, end: 0 } ]
-					values.blendHeight[0] = 0;
-					values.blendHeight[1] = objs.canvas.height;
-					values.blendHeight[2].start = values.rectangleLeft[2].end;
-					values.blendHeight[2].end = values.blendHeight[2].start + 0.2;
-					const blendHeight = calcValues(values.blendHeight, currentYOffsetAtCurrentScene);
+					// cssMeta.blendHeight: [ 0, 0, { start: 0, end: 0 } ]
+					cssMeta.blendHeight[0] = 0;
+					cssMeta.blendHeight[1] = objs.canvas.height;
+					cssMeta.blendHeight[2].start = cssMeta.rectangleLeft[2].end;
+					cssMeta.blendHeight[2].end = cssMeta.blendHeight[2].start + 0.2;
+					const blendHeight = calculateCssValueFromCurrentScene(cssMeta.blendHeight, currentYOffsetAtCurrentScene);
 
 					objs.context.drawImage(objs.images[1],
 						0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight,
@@ -376,28 +378,28 @@
 					objs.canvas.classList.add('sticky');
 					objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`;
 
-					if (scrollRatioAtCurrentScene > values.blendHeight[2].end) {
-						values.canvas_scale[0] = canvasScaleRatio;
-						values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width);
-						values.canvas_scale[2].start = values.blendHeight[2].end;
-						values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2;
+					if (scrollRatioAtCurrentScene > cssMeta.blendHeight[2].end) {
+						cssMeta.canvas_scale[0] = canvasScaleRatio;
+						cssMeta.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width);
+						cssMeta.canvas_scale[2].start = cssMeta.blendHeight[2].end;
+						cssMeta.canvas_scale[2].end = cssMeta.canvas_scale[2].start + 0.2;
 
-						objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYOffsetAtCurrentScene)})`;
+						objs.canvas.style.transform = `scale(${calculateCssValueFromCurrentScene(cssMeta.canvas_scale, currentYOffsetAtCurrentScene)})`;
 						objs.canvas.style.marginTop = 0;
 					}
 
-					if (scrollRatioAtCurrentScene > values.canvas_scale[2].end
-						&& values.canvas_scale[2].end > 0) {
+					if (scrollRatioAtCurrentScene > cssMeta.canvas_scale[2].end
+						&& cssMeta.canvas_scale[2].end > 0) {
 
 						objs.canvas.classList.remove('sticky');
 						objs.canvas.style.marginTop = `${CurrentScenescrollHeight * 0.4}px`;
 
-						values.canvasCaption_opacity[2].start = values.canvas_scale[2].end;
-						values.canvasCaption_opacity[2].end = values.canvasCaption_opacity[2].start + 0.1;
-						values.canvasCaption_translateY[2].start = values.canvasCaption_opacity[2].start;
-						values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end;
-						objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYOffsetAtCurrentScene);
-						objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYOffsetAtCurrentScene)}%, 0)`;
+						cssMeta.canvasCaption_opacity[2].start = cssMeta.canvas_scale[2].end;
+						cssMeta.canvasCaption_opacity[2].end = cssMeta.canvasCaption_opacity[2].start + 0.1;
+						cssMeta.canvasCaption_translateY[2].start = cssMeta.canvasCaption_opacity[2].start;
+						cssMeta.canvasCaption_translateY[2].end = cssMeta.canvasCaption_opacity[2].end;
+						objs.canvasCaption.style.opacity = calculateCssValueFromCurrentScene(cssMeta.canvasCaption_opacity, currentYOffsetAtCurrentScene);
+						objs.canvasCaption.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.canvasCaption_translateY, currentYOffsetAtCurrentScene)}%, 0)`;
 					}
 				}
 
@@ -410,10 +412,10 @@
 		prevAllSceneHeight = 0;
 
 		for (let i = 0; i < currentSceneID; i++) {
-			prevAllSceneHeight += sceneInfo[i].playLength;
+			prevAllSceneHeight += filmInfo[i].playLength;
 		}
 
-		if (delayedYOffset > prevAllSceneHeight + sceneInfo[currentSceneID].playLength) {
+		if (delayedYOffset > prevAllSceneHeight + filmInfo[currentSceneID].playLength) {
 			enterNewScene = true;
 			currentSceneID++;
 			document.body.setAttribute('id', `show-scene-${currentSceneID}`);
@@ -437,9 +439,9 @@
 		if (!enterNewScene) {
 			if (currentSceneID === 0 || currentSceneID === 2) {
 				const currentYOffset = delayedYOffset - prevAllSceneHeight;
-				const objs = sceneInfo[currentSceneID].objs;
-				const values = sceneInfo[currentSceneID].values;
-				let sequence = Math.round(calcValues(values.imageSequencesStartEnd, currentYOffset));
+				const objs = filmInfo[currentSceneID].objs;
+				const cssMeta = filmInfo[currentSceneID].cssMeta;
+				let sequence = Math.round(calculateCssValueFromCurrentScene(cssMeta.imageSequencesStartEnd, currentYOffset));
 				if (objs.videoImages[sequence]) {
 					objs.context.drawImage(objs.videoImages[sequence], 0, 0);
 				}
@@ -451,8 +453,8 @@
         // home 키로 페이지 맨 위로 갈 경우: scrollLoop와 첫 scene의 기본 캔버스 그리기 수행
         if (delayedYOffset < 1) {
             scrollLoop();
-            sceneInfo[0].objs.canvas.style.opacity = 1;
-            sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+            filmInfo[0].objs.canvas.style.opacity = 1;
+            filmInfo[0].objs.context.drawImage(filmInfo[0].objs.videoImages[0], 0, 0);
         }
         // end 키로 페이지 맨 아래로 갈 경우: 마지막 섹션은 스크롤 계산으로 위치 및 크기를 결정해야할 요소들이 많아서 1픽셀을 움직여주는 것으로 해결
         if ((document.body.offsetHeight - window.innerHeight) - delayedYOffset < 1) {
@@ -471,7 +473,7 @@
 	window.addEventListener('load', () => {
         document.body.classList.remove('before-load');
         setLayout();
-        sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+        filmInfo[0].objs.context.drawImage(filmInfo[0].objs.videoImages[0], 0, 0);
 
         let tempYOffset = window.pageYOffset;
         let tempScrollCount = 0;
@@ -499,7 +501,7 @@
   		window.addEventListener('resize', () => {
   			if (window.innerWidth > 900) {
   				setLayout();
-  				sceneInfo[3].values.rectangleY = 0;
+  				filmInfo[3].cssMeta.rectangleY = 0;
   			}
 
             if (currentSceneID === 3) {
