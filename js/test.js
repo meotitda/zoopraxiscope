@@ -1,5 +1,9 @@
+// 전체 화면 만들기
 const film = new Film()
+
+// 섹션 입히기
 const section = new Section({
+    id : 1,
     name:'scroll-section-0',
     type: 'sticky',
     playLengthParam: 10, 
@@ -14,13 +18,22 @@ const section = new Section({
     imagePath: "./video/videoplayback_",
     firstImageSequence: 1000,
     extension : 'jpg',
-    objs: {
+    components: {
+        test : document.getElementById('test')
     },
-    css: {
+    animation: {
+        test_opacity_in: [0, 1, {start:0.2, end:0.4}]
     }
 })
+
+
+// 이미지 추가하기
 section.setCanvasImages()
 
+// 색션 추가하기
 film.addSection(section)
 
-console.log(film)
+//레이아웃 잡기
+film.setLayout(section)
+
+// 그리기

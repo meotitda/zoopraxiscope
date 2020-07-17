@@ -6,31 +6,45 @@ var Film = function() {
 	this.delayedYOffset = 0;
 	this.rafID;
 	this.rafState;
-	this.section = []
+	this.sections = []
 	this.root = document.querySelector('body')
 };
 
 Film.prototype.addSection = function(section) {
-	this.section.push(section)
+	this.sections.push(section)
+}
+
+Film.prototype.play = function() {
+	
 }
 
 var Section = function(info) {
+	const id = `zoopraxiscope-canvas${this.id}`
+
+	this.playLength=info.playLength
+	this.name=info.name
 	this.videoImageCount = info.videoImageCount
 	this.imagePath = info.imagePath
 	this.firstImageSequence = info.firstImageSequence
 	this.extension = info.extension
 	this.videoImages = []
-	console.log(info.name)
 	const section = document.getElementById(info.name)
 	const wrapper = document.createElement("DIV");
+	
+	this.components = info.components
+	this.animation = info.animation
 
-	wrapper.classList.add('sticky-elem', 'sticky-elem-canvas')
+	wrapper.classList.add('zoopraxiscope', `zoopraxiscope-canvas`)
+	wrapper.id = id
 	const canvas = document.createElement("canvas");
 	canvas.width = info.canvasWidth
 	canvas.height = info.canvasHeight
 	canvas.id = "video-canvas-0"
 	wrapper.appendChild(canvas)
 	section.appendChild(wrapper)
+
+	Object.assign(this.components, {canvas: document.querySelector(`#${id}`)})
+	Object.assign(this.components, {container: document.querySelector(`#${this.name}`)})
 }
 
 Section.prototype.setCanvasImages = function() {
@@ -41,13 +55,23 @@ Section.prototype.setCanvasImages = function() {
 	}
 }
 
-function setLayout() {
-	setContainerHeight();
+Section.prototype.play = function() {
+	if (scrollRatioAtCurrentScene <= 0.41) { 
+		components.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_in, currentYOffsetAtCurrentScene);
+		components.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_in, currentYOffsetAtCurrentScene)}%, 0)`;
+	} else {
+		components.messageA.style.opacity = calculateCssValueFromCurrentScene(cssMeta.messageA_opacity_out, currentYOffsetAtCurrentScene);
+		components.messageA.style.transform = `translate3d(0, ${calculateCssValueFromCurrentScene(cssMeta.messageA_translateY_out, currentYOffsetAtCurrentScene)}%, 0)`;
+	}
+}
+
+Film.prototype.setLayout= function () {
+	setContainerHeight(this.sections);
 
 	// set CurrentSceneID
 	let totalScrollHeight = 0;
-	for (let i = 0; i < filmInfo.length; i++) {
-		totalScrollHeight += filmInfo[i].playLength;
+	for (let i = 0; i < this.sections.length; i++) {
+		totalScrollHeight += this.sections[i].playLength;
 		if (totalScrollHeight >= window.pageYOffset) {
 			currentSceneID = i;
 			break;
@@ -56,9 +80,9 @@ function setLayout() {
 	document.body.setAttribute('id', `show-scene-${currentSceneID}`);
 
 
-	setCanvasLayout();
+	setCanvasLayout(this.sections);
 
-	function setCanvasLayout() {
+	function setCanvasLayout(sections) {
 		const widthRatio = window.innerWidth / 1920;
 		const heightRatio = window.innerHeight / 1080;
 		let canvasScaleRatio;
@@ -68,19 +92,22 @@ function setLayout() {
 		else {
 			canvasScaleRatio = widthRatio;
 		}
-		filmInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
-		filmInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
+		let totalScrollHeight = 0;
+
+		for (let i = 0; i < sections.length; i++) {
+			sections[i].components.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${canvasScaleRatio})`;
+		}
 	}
 
-	function setContainerHeight() {
-		for (let i = 0; i < filmInfo.length; i++) {
-			if (filmInfo[i].type === 'sticky' || filmInfo[i].type === 'wide') {
-				filmInfo[i].playLength = filmInfo[i].playLengthParam * window.innerHeight;
+	function setContainerHeight(sections) {
+		for (let i = 0; i < sections.length; i++) {
+			if (sections[i].type === 'sticky' || sections[i].type === 'wide') {
+				sections[i].playLength = sections[i].playLengthParam * window.innerHeight;
 			}
-			else if (filmInfo[i].type === 'normal') {
-				filmInfo[i].playLength = filmInfo[i].objs.container.offsetHeight;
+			else if (sections[i].type === 'normal') {
+				sections[i].playLength = sections[i].components.container.offsetHeight;
 			}
-			filmInfo[i].objs.container.style.height = `${filmInfo[i].playLength}px`;
+			sections[i].components.container.style.height = `${sections[i].playLength}px`;
 		}
 	}
 }

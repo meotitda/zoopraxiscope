@@ -15,6 +15,8 @@
 			playLength: 0, 
 			objs: {
 				container: document.querySelector('#scroll-section-0'),
+				messageA: document.querySelector('#scroll-section-0 .main-message.a'),
+				messageB: document.querySelector('#scroll-section-0 .main-message.b'),
 				canvas: document.querySelector('#video-canvas-0'),
 				context: document.querySelector('#video-canvas-0').getContext('2d'),
 				videoImages: []
