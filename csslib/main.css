@@ -1,121 +1,76 @@
 @charset 'utf-8';
 
+/* zoopri basic */
 html {
 	font-family: 'Noto Sans KR', sans-serif;
 	font-size: 14px;
 }
 body {
 	overflow-x: hidden;
-	color: black;
-	letter-spacing: -0.05em;
 	background: white;
 }
-p {
-	line-height: 1.6;
-}
-a {
-	color: black;
-	text-decoration: none;
-}
 
-body.before-load {
-	overflow: hidden;
-}
-.container {
-	/* iPhone 가로 스크롤 방지 */
+.zoopraxiscope {
 	overflow-x: hidden;
 }
 
-.scroll-section {
+.zoopraxiscope-section {
 	position: relative;
 	padding-top: 50vh;
 }
-#scroll-section-0 h1 {
-	position: relative;
-	top: -10vh;
-	z-index: 5;
-	font-size: 4rem;
-	text-align: center;
-}
-.main-message {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	top: 35vh;
-	margin: 5px 0;
-	height: 3em;
-	font-size: 2.5rem;
-	opacity: 0;
-}
-.main-message p {
-	font-weight: bold;
-	text-align: center;
-	line-height: 1.2;
-}
-.main-message small {
+
+.zoopraxiscope-sticky {
 	display: block;
-	margin-bottom: 0.5em;
-	font-size: 1.2rem;
-}
-#scroll-section-2 .main-message {
-	font-size: 3.5rem;
-}
-.description {
-	max-width: 1000px;
-	margin: 0 auto;
-	padding: 0 1rem;
-	font-size: 1.2rem;
-	color: #888;
-}
-.description strong {
-	float: left;
-	margin-right: 0.2em;
-	font-size: 3rem;
-	color: black;
-}
-.desc-message {
-	width: 50%;
-	font-weight: bold;
-	opacity: 0;
-}
-
-
-.mid-message {
-	max-width: 1000px;
-	margin: 0 auto;
-	padding: 0 1rem;
-	font-size: 2rem;
-	color: #888;
-}
-.mid-message strong {
-	color: black;
-}
-.canvas-caption {
-	max-width: 1000px;
-	margin: -24rem auto 0;
-	padding: 0 1rem;
-	font-size: 1.2rem;
-	color: #888;
-}
-.zoopraxiscope {
-	display: none;
 	position: fixed;
 	left: 0;
 	width: 100%;
+	will-change: transform, opacity;
 }
+
 .zoopraxiscope-canvas {
 	top: 0;
 	height: 100%;
+	z-index: -1;
 }
+
 .zoopraxiscope-canvas canvas {
 	position: absolute;
 	top: 50%;
 	left: 50%;
 }
 
-.before-load .container {
-    display: none;
+/* specific */
+
+.zoopraxiscope-wide {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
-.before-load .loading {
-	opacity: 1;
+
+.image-blend-canvas.sticky {
+	position: fixed;
+	top: 0;
+}
+
+#ui {
+	top: 10%;
+	left: 40%;
+}
+
+#iu {
+	top: 30%;
+	left: 40%;
+}
+
+#story {
+	top: 30%;
+	left: 40%;
+}
+
+.zoopraxiscope-sticky p {
+	color:white;
+}
+
+.zoopraxiscope-sticky div {
+	opacity: 0;
 }

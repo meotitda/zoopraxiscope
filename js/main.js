@@ -190,7 +190,10 @@
 				cssValue = cssMeta[1];
 			}
 		} else {
+			console.log('currentScrollRatio',currentScrollRatio)
+			console.log('cssMeta[1] - cssMeta[0]',cssMeta[1] - cssMeta[0])
 			cssValue = currentScrollRatio * (cssMeta[1] - cssMeta[0]) + cssMeta[0];
+			console.log('cssValue',cssValue)
 		}
 
 		return cssValue;
@@ -412,28 +415,30 @@
 
 		for (let i = 0; i < currentSceneID; i++) {
 			prevAllSceneHeight += filmInfo[i].playLength;
-		}
+		} // 이전씬의 높이 세팅 - 필름
 
 		if (delayedYOffset > prevAllSceneHeight + filmInfo[currentSceneID].playLength) {
 			enterNewScene = true;
 			currentSceneID++;
 			document.body.setAttribute('id', `show-scene-${currentSceneID}`);
-		}
+		} // 씬의 변경 - 필름
 
 		if (delayedYOffset < prevAllSceneHeight) {
 			enterNewScene = true;
 			if (currentSceneID === 0) return; // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지(모바일)
 			currentSceneID--;
 			document.body.setAttribute('id', `show-scene-${currentSceneID}`);
-		}
+		} // 씬의 변경 - 필름
 
-		if (enterNewScene) return;
 
-		playAnimation();
+
+		if (enterNewScene) return; // 씬의 무변경 - 필름
+
+		playAnimation(); // 씬마다 애니메이션 실행
 	}
 
 	function animationLoop() {
-		delayedYOffset = delayedYOffset + (window.pageYOffset - delayedYOffset) * acc;
+		delayedYOffset = delayedYOffset + (window.pageYOffset - delayedYOffset) * acc; // 가속
 
 		if (!enterNewScene) {
 			if (currentSceneID === 0 || currentSceneID === 2) {
@@ -445,21 +450,21 @@
 					objs.context.drawImage(objs.videoImages[sequence], 0, 0);
 				}
 			}
-		}
+		}  // 씬에 대한 그림 그리기
 
-        // 추가 코드
-        // home이나 end를 이용해 페이지 끝으로 고속 이동하면 body id가 제대로 인식 안되는 경우를 해결
-        // home 키로 페이지 맨 위로 갈 경우: scrollLoop와 첫 scene의 기본 캔버스 그리기 수행
-        if (delayedYOffset < 1) {
-            scrollLoop();
-            filmInfo[0].objs.canvas.style.opacity = 1;
-            filmInfo[0].objs.context.drawImage(filmInfo[0].objs.videoImages[0], 0, 0);
-        }
-        // end 키로 페이지 맨 아래로 갈 경우: 마지막 섹션은 스크롤 계산으로 위치 및 크기를 결정해야할 요소들이 많아서 1픽셀을 움직여주는 것으로 해결
-        if ((document.body.offsetHeight - window.innerHeight) - delayedYOffset < 1) {
-            let tempYOffset = window.pageYOffset;
-            scrollTo(0, tempYOffset - 1);
-        }
+        // // 추가 코드
+        // // home이나 end를 이용해 페이지 끝으로 고속 이동하면 body id가 제대로 인식 안되는 경우를 해결
+        // // home 키로 페이지 맨 위로 갈 경우: scrollLoop와 첫 scene의 기본 캔버스 그리기 수행
+        // if (delayedYOffset < 1) {
+        //     scrollLoop(); 
+        //     filmInfo[0].objs.canvas.style.opacity = 1;
+        //     filmInfo[0].objs.context.drawImage(filmInfo[0].objs.videoImages[0], 0, 0);
+        // }
+        // // end 키로 페이지 맨 아래로 갈 경우: 마지막 섹션은 스크롤 계산으로 위치 및 크기를 결정해야할 요소들이 많아서 1픽셀을 움직여주는 것으로 해결
+        // if ((document.body.offsetHeight - window.innerHeight) - delayedYOffset < 1) {
+        //     let tempYOffset = window.pageYOffset;
+        //     scrollTo(0, tempYOffset - 1);
+        // }
 
 		rafID = requestAnimationFrame(animationLoop);
 
@@ -470,11 +475,11 @@
 	}
 
 	window.addEventListener('load', () => {
-        document.body.classList.remove('before-load');
-        setLayout();
+        document.body.classList.remove('before-load'); // 로딩 - 필름
+        setLayout(); // 레이아웃 세팅 (필름 -> 섹션) - 필름
         filmInfo[0].objs.context.drawImage(filmInfo[0].objs.videoImages[0], 0, 0);
-
-        let tempYOffset = window.pageYOffset;
+		// 찻반쩨 이미지 드로우 - 필름
+        let tempYOffset = window.pageYOffset; // 따다닥 - 필름
         let tempScrollCount = 0;
         if (tempYOffset > 0) {
             let siId = setInterval(() => {
@@ -489,10 +494,10 @@
         }
 
         window.addEventListener('scroll', () => {
-			scrollLoop();
+			scrollLoop(); // 높이에 따른 씬의 변경과 애니메이션 실행
 
   			if (!rafState) {
-  				rafID = requestAnimationFrame(animationLoop);
+  				rafID = requestAnimationFrame(animationLoop); // 이미지 변경 (필름->섹션) - 필름
   				rafState = true;
   			}
   		});
