@@ -23,7 +23,7 @@ Include the core library in your HTML file:
 const film = new Film()
 
 const section1 = new Section({
-    id : 'forward',
+    id : 'forward', // section id
     type: 'projector',
     playLengthParam: 10, 
     playLength: 0, 
@@ -36,7 +36,7 @@ const section1 = new Section({
     extension : 'jpg',
     scenes: [
         {
-            element : document.getElementById('iu'),
+            element : document.getElementById('iu') // scene element,
             animations: [
                 {
                     type : 'opacity',
@@ -74,4 +74,29 @@ section1.draw()
 film.addSection(section1)
 film.setLayout(section1)
 film.init()
+```
+
+```html
+<body>
+    <!-- wrap zoopraxiscope class div  -->
+	<div class="zoopraxiscope"> 
+        <!-- wrap zoopraxiscope-section class section  -->
+		<section class="zoopraxiscope-section" id="forward">
+            <h1>zoopraxiscope</h1>
+            <!-- if you want to add scene wrap zoopraxiscope-sticky -->
+			<div class="zoopraxiscope-sticky" id="iu">
+				<p>IU</p>
+			</div>
+			<div class="zoopraxiscope-sticky" id="story">
+				<p>myoldstory</p>
+			</div>
+		</section>
+		<section class="zoopraxiscope-section" id="backward">
+            <h1>epocsixarpooz</h1>
+			<div class="zoopraxiscope-sticky" id="ui">
+				<p>UI</p>
+			</div>
+		</section>
+	</div>
+<body>
 ```
