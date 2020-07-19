@@ -62,46 +62,46 @@ film.setLayout(section1)
 
 
 
-// const section2 = new Section({
-//     id : 'backward',
-//     type: 'projector',
-//     playLengthParam: 10, 
-//     playLength: 0, 
-//     videoImageCount: 300,
-//     canvasWidth: 1920,
-//     canvasHeight : 1080,
-//     imageSequencesStartEnd: [400,699],
+const section2 = new Section({
+    id : 'backward',
+    type: 'projector',
+    playLengthParam: 10, 
+    playLength: 0, 
+    videoImageCount: 300,
+    canvasWidth: 1920,
+    canvasHeight : 1080,
+    imageSequencesStartEnd: [400,699],
 
-//     imagePath: "./video/videoplayback_",
-//     firstImageSequence: 1600,
-//     extension : 'jpg',
-//     scenes: [
-//         {
-//             element : document.getElementById('ui'),
-//             animations: [
-//                 {
-//                     type : 'opacity',
-//                     inout: 'in',
-//                     value : [0, 1, {start:0.2, end:0.4}]
-//                 },
-//                 {
-//                     type : 'opacity',
-//                     inout: 'out',
-//                     value : [1, 0, {start:0.42, end:0.62}]
-//                 }
-//             ] 
-//         },
-//     ]
-// })
+    imagePath: "./video/videoplayback_",
+    firstImageSequence: 1600,
+    extension : 'jpg',
+    scenes: [
+        {
+            element : document.getElementById('ui'),
+            animations: [
+                {
+                    type : 'opacity',
+                    inout: 'in',
+                    value : [0, 1, {start:0.2, end:0.4}]
+                },
+                {
+                    type : 'opacity',
+                    inout: 'out',
+                    value : [1, 0, {start:0.41, end:0.62}]
+                }
+            ] 
+        },
+    ]
+})
 
-// // 이미지 추가하기
-// section2.setCanvasImages()
+// 이미지 추가하기
+section2.setCanvasImages()
 
-// // 색션 추가하기
-// film.addSection(section2)
+// 색션 추가하기
+film.addSection(section2)
 
-// //레이아웃 잡기
-// film.setLayout(section2)
+//레이아웃 잡기
+film.setLayout(section2)
 
 // // 그리기
 

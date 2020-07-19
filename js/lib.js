@@ -80,6 +80,11 @@ Film.prototype.init = function() {
 	window.addEventListener('load', () => {	
 		let tempYOffset = window.pageYOffset;
 		let tempScrollCount = 0;
+		let firstSection = this.sections[0]
+
+		if(firstSection.type == 'projector') {
+			firstSection.scenes.context.drawImage(firstSection.videoImages[0], 0, 0);
+		}
 		if (tempYOffset > 0) {
 			let siId = setInterval(() => {
 				scrollTo(0, tempYOffset);
@@ -185,7 +190,7 @@ var Section = function(info) {
 	const canvasID = `zoopraxiscope-canvas-${this.id}`
 
 	const section = document.getElementById(this.id)
-	const canvasWrapper = document.createElement("DIV");
+	const canvasWrapper = document.createElement("stage");
 
 	canvasWrapper.classList.add(`zoopraxiscope-canvas`, 'zoopraxiscope-sticky')
 	const canvas = document.createElement("canvas");

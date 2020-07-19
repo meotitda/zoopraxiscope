@@ -71,6 +71,10 @@ body {
 	color:white;
 }
 
-.zoopraxiscope-sticky div {
+/* .zoopraxiscope-sticky{
+	font-size: 100px;
+} */
+
+div.zoopraxiscope-sticky {
 	opacity: 0;
 }
