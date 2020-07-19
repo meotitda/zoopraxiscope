@@ -19,6 +19,8 @@ Include the core library in your HTML file:
 ## Usage
 ---
 
+javascript
+
 ``` javascript
 const film = new Film()
 
@@ -75,6 +77,8 @@ film.addSection(section1)
 film.setLayout(section1)
 film.init()
 ```
+
+html
 
 ```html
 <body>
