@@ -81,6 +81,7 @@ film.init()
 html
 
 ```html
+	<link rel="stylesheet" href="https://zoopraxiscope.vercel.app/lib/css/core.css">
 <body>
     <!-- wrap zoopraxiscope class div  -->
 	<div class="zoopraxiscope"> 
@@ -103,4 +104,5 @@ html
 		</section>
 	</div>
 <body>
+<script src="https://zoopraxiscope.vercel.app/lib/js/core.js">
 ```
