@@ -1,0 +1,65 @@
+@charset 'utf-8';
+
+/* zoopri basic */
+html {
+	font-family: 'Noto Sans KR', sans-serif;
+	font-size: 14px;
+}
+body {
+	overflow-x: hidden;
+	background: white;
+}
+
+.zoopraxiscope {
+	overflow-x: hidden;
+}
+
+.zoopraxiscope-section {
+	position: relative;
+	padding-top: 50vh;
+}
+
+.zoopraxiscope-sticky {
+	display: block;
+	position: fixed;
+	left: 0;
+	width: 100%;
+	will-change: transform, opacity;
+}
+
+.zoopraxiscope-canvas {
+	top: 0;
+	height: 100%;
+	z-index: -1;
+}
+
+.zoopraxiscope-canvas canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+/* specific */
+
+.zoopraxiscope-wide {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.image-blend-canvas.sticky {
+	position: fixed;
+	top: 0;
+}
+
+.zoopraxiscope-sticky p {
+	color:white;
+}
+
+/* .zoopraxiscope-sticky{
+	font-size: 100px;
+} */
+
+div.zoopraxiscope-sticky {
+	opacity: 0;
+}
