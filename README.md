@@ -38,7 +38,7 @@ const section1 = new Section({
     extension : 'jpg',
     scenes: [
         {
-            element : document.getElementById('iu') // scene element,
+            element : document.getElementById('iu'), // scene element
             animations: [
                 {
                     type : 'opacity',
