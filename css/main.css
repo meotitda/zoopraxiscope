@@ -1,14 +1,19 @@
-#ui {
-	top: 10%;
-	left: 40%;
+html, body, div, h1, h2, h3, h4, h5, h6, p {
+	margin: 0;
+	padding: 0;
 }
-
 #iu {
-	top: 30%;
-	left: 40%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 #story {
-	top: 30%;
-	left: 40%;
+	top: 20%;
+}
+
+#ui {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
