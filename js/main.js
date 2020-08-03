@@ -14,6 +14,7 @@ const section1 = new Section({
   imagePath: './video/videoplayback_',
   firstImageSequence: 1000,
   extension: 'jpg',
+  fadeIn: false,
   scenes: [
     {
       element: document.getElementById('iu'),
@@ -56,8 +57,19 @@ section1.draw()
 // 색션 추가하기
 film.addSection(section1)
 
-//레이아웃 잡기
-film.setLayout(section1)
+const voidSection = new Section({
+  id: 'middle',
+  type: 'void',
+  playLength: 0,
+  scenes: [
+    {
+      element: document.getElementById('void_example'),
+    },
+  ],
+})
+
+// 색션 추가하기
+film.addSection(voidSection)
 
 const section2 = new Section({
   id: 'backward',
@@ -74,7 +86,7 @@ const section2 = new Section({
   extension: 'jpg',
   scenes: [
     {
-      element: document.getElementById('ui'),
+      element: document.getElementById('epoc'),
       animations: [
         {
           type: 'opacity',
@@ -85,6 +97,21 @@ const section2 = new Section({
           type: 'opacity',
           inout: 'out',
           value: [1, 0, { start: 0.41, end: 0.62 }],
+        },
+      ],
+    },
+    {
+      element: document.getElementById('ui'),
+      animations: [
+        {
+          type: 'opacity',
+          inout: 'in',
+          value: [0, 1, { start: 0.63, end: 0.8 }],
+        },
+        {
+          type: 'opacity',
+          inout: 'out',
+          value: [1, 0, { start: 0.81, end: 0.91 }],
         },
       ],
     },
