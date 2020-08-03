@@ -1,28 +1,28 @@
 <h1 style="text-align: center">Zoopraxiscope</h1>
 
-Zoopraxiscope is no dependency, smooth interactive video scroll framework📽✨
+Zoopraxiscope(영사기)는 의존성이 없는, 자연스러운 인터렉티브 비디오 스크롤 프레임워크입니다📽✨
 
 
 
-## Demo
+## 데모
 ---
 https://zoopraxiscope.vercel.app/
 
-## Installation
+## 설치 방법 (CDN)
 ---
-Include the core in your HTML file:
+사용하실 HTML file에 다음 코어를 포함해주세요
 ```html
 	<link rel="stylesheet" href="https://zoopraxiscope.vercel.app/css/main.css">
     <script src="https://zoopraxiscope.vercel.app/js/main.css">
 ```
 
-## Usage
+## 사용법
 ---
 
 html
 
 ```html
-	<link rel="stylesheet" href="https://zoopraxiscope.vercel.app/lib/css/core.css">
+<link rel="stylesheet" href="https://zoopraxiscope.vercel.app/lib/css/core.css">
 <body>
     <!-- wrap zoopraxiscope class div  -->
 	<div class="zoopraxiscope"> 
@@ -51,12 +51,12 @@ html
 
 javascript
 
-```javascript
-// example.js
+``` javascript
+//example.js
 const film = new Film()
 
 const section1 = new Section({
-    id : 'forward', // section id
+    id : 'forward', // html의 섹션의 id 값 입니다.
     type: 'projector',
     playLengthParam: 10, 
     playLength: 0, 
@@ -69,8 +69,8 @@ const section1 = new Section({
     extension : 'jpg',
     scenes: [
         {
-            element : document.getElementById('iu'), // scene element
-            animations: [ // describe animations
+            element : document.getElementById('iu'), // 씬의 엘리먼트를 등록합니다.
+            animations: [ // 애니메이션을 작성합니다.
                 {
                     type : 'opacity',
                     inout: 'in',
@@ -107,5 +107,4 @@ section1.draw()
 film.addSection(section1)
 film.setLayout(section1)
 film.init()
-
 ```
