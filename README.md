@@ -2,6 +2,8 @@
 
 Zoopraxiscope is no dependency, smooth interactive video scroll framework📽✨
 
+## Language
+[한국어](./translate/README_KO.md)
 
 
 ## Demo
